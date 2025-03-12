@@ -1,0 +1,31 @@
+{
+  "name": "playwright_group2_lms_bdd_project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "clear-screenshots": "node clearScreenshots.js",
+    "bddgen": "npx bddgen",
+    "test": "npx playwright test --headed --reporter=html,list,allure-playwright"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.1",
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.9.0",
+    "allure-js-commons": "^3.0.6",
+    "allure-playwright": "^3.2.0",
+    "dotenv": "^16.4.5",
+    "playwright-bdd": "^7.5.0"
+  },
+  "dependencies": {
+    "playwright": "^1.48.2",
+    "sharp": "^0.33.5",
+    "simple-spellchecker": "^1.0.2",
+    "spell": "^1.0.0",
+    "tesseract.js": "^1.0.19",
+    "xlsx": "^0.18.5"
+  }
+}
