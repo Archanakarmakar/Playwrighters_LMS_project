@@ -1,5 +1,5 @@
 const {LoginPage} = require('./LoginPage');
-const { DashboardPage} = require('./DashboardPage');
+const { HomePage} = require('./HomePage');
 const { ProgramPage } = require('./ProgramPage');
 const { ReusablePage } = require('./ReusablePage');
 const {PaginationAndSorting} = require('./PaginationAndSorting')
@@ -11,37 +11,37 @@ constructor(page)
 {
     this.page = page;
     this.loginPage = new LoginPage(this.page);
-    this.dashboardpage = new DashboardPage(this.page);
+    this.homePage = new HomePage(this.page);
     this.program = new ProgramPage(this.page);
-    this.reusablepage = new ReusablePage(this.page);
+    this.reusablePage = new ReusablePage(this.page);
     this.paginationAndSorting = new PaginationAndSorting(this.page)
-    this.logoutpage = new LogoutPage(this.page);
-    this.classpage = new ClassPage(this.page);
+    this.logoutPage = new LogoutPage(this.page);
+    this.classPage = new ClassPage(this.page);
 }
 
 getLoginPage()
 {
     return this.loginPage;
 }
-getDashboardPage()
+getHomePage()
 {
-    return this.dashboardpage;
+    return this.homePage;
 }
 getProgramPage(){
     return this.program;
 }
 getReusablePage(){
-    return this.reusablepage;
+    return this.reusablePage;
 }
 
 getPaginationAndSorting(){
     return this.paginationAndSorting;
 }
 getLogoutPage(){
-    return this.logoutpage;
+    return this.logoutPage;
 }
 getClassPage(){
-    return this.classpage;
+    return this.classPage;
 }
 }
 
