@@ -28,27 +28,27 @@ async navigate() {
     await  this.password.fill(process.env.PASSWORD);  // Use the password stored in .env
     await this.login_btn.click();
   }
-   getEditProgramName(){
-    return String(process.env.EDIT_PROGRAM);
-  }
-  async getEditProgramDesc(){
-    return String(this.editProgramDesc);
-  }
+//    getEditProgramName(){
+//     return String(process.env.EDIT_PROGRAM);
+//   }
+//   async getEditProgramDesc(){
+//     return String(this.editProgramDesc);
+//   }
 
-  async getInvalidProgramName(){
-    return String(this.invalidProgramName);
-  }
+//   async getInvalidProgramName(){
+//     return String(this.invalidProgramName);
+//   }
 
-   getPartialProgramName(){
-    return this.partialProgramName;
-  }
+//    getPartialProgramName(){
+//     return this.partialProgramName;
+//   }
 
- getClassTopicValue(){
-    return String(process.env.TOPIC);
-  }
-  getNewClassDescValue(){
-    return String(process.env.CLASSDESC)
-  }
+//  getClassTopicValue(){
+//     return String(process.env.TOPIC);
+//   }
+//   getNewClassDescValue(){
+//     return String(process.env.CLASSDESC)
+//   }
 
   async validLogin(KeyOption,sheetname){
     const filepath = 'tests/TestData/PlayWright_Group5_Data.xlsx';
