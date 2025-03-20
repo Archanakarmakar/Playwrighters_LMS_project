@@ -1,7 +1,7 @@
 import { createBdd } from "playwright-bdd";
 const {Given, When, Then} = createBdd();
 const { expect } = require('@playwright/test');
-const { POManager} = require('../PageObjects/POManager');
+const { POManager} = require('../PageObject/POManager');
 
 let loginPage;
 let homePage;
@@ -20,7 +20,7 @@ let reusablePage;
   Given('Admin is on home page after Login', async ({page}) => {
     const pageManager = new POManager(page);
     //----remove code for login after merging--------------->
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.navigate();
     await reusablePage.login();
     //-----------------remove till here--------------------->
