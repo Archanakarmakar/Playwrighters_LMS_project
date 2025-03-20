@@ -43,7 +43,6 @@ let reusablePage;
     const actualTitle = await programPage.getActualProgramPageTitle();
     console.log("Actual Title : "+actualTitle);
     console.log("Expected Title : Manage Program");
-
     expect(actualTitle).toEqual('Manage Program');
     //console.log('Admin is navigated to Program module');
   });
