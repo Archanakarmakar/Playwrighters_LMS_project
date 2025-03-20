@@ -97,6 +97,11 @@ async click(selector){
 await selector.click();
 }
 
+async getHeaderText(locator){
+  const headerText =  await locator.innerText();
+  return headerText.trim();
+  }
+
 
 }
 module.exports= {ReusablePage}
