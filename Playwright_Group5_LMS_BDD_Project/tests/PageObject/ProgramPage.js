@@ -23,7 +23,7 @@ class ProgramPage {
         this.programNameError = page.locator('(//../small)[1]');
         this.programDescriptionError = page.locator('(//../small)[2]');
         this.programStatusError = page.locator('(//../small)[3]');
-
+        this.add_programname = page.locator('#programName');
         // Define the mandatory fields and their associated label and asterisk selectors
         this.programPageMandatoryFields = [
         { label: 'Name', labelSelector: 'label[for="programName"]', asteriskSelector: '(//../span[text()="*"])[1]' },
@@ -126,6 +126,16 @@ class ProgramPage {
     await expect(asteriskLocator).toHaveCSS('color', 'rgb(255, 0, 0)'); // RGB value for red
   }
     
+  async enter_programname(Keyoption,sheetname){
+    const testData = getDataByKeyOption(filepath,sheetname,Keyoption);
+    const program_name = testData['Input_name'];
+    console.log("program_name to enter is :"+program_name);
+    await this.add_programname.fill(program_name);
+    
+  }
+  async enteredText(){
+   return this.add_programname;
+  }
     
 }
 module.exports = {ProgramPage};

@@ -1,41 +1,41 @@
 Feature: Verify add New Program
 
-#   Background:
-#     Given Admin is on program module after reaching home
+  Background:
+    Given Admin is on program module after reaching home
 
-#   Scenario: Verify add New Program
-#     Given Admin is on Program module
-#     When Admin clicks on New Program under the Program menu bar
-#     Then Admin should see pop up window for program details
+  Scenario: Verify add New Program
+    Given Admin is on Program module
+    When Admin clicks on New Program under the Program menu bar
+    Then Admin should see pop up window for program details
 
-#   Scenario: Verify title of the pop up window
-#     Given Admin is on Program module
-#     When Admin clicks on New Program under the Program menu bar
-#     Then Admin should see window title as "Program Details"
+  Scenario: Verify title of the pop up window
+    Given Admin is on Program module
+    When Admin clicks on New Program under the Program menu bar
+    Then Admin should see window title as "Program Details"
 
-#   Scenario: Verify mandatory fields with red "*" mark
-#     Given Admin is on Program module
-#     When Admin clicks on New Program under the Program menu bar
-#     Then Admin should see red "*" mark beside mandatory field "Name"
+  Scenario: Verify mandatory fields with red "*" mark
+    Given Admin is on Program module
+    When Admin clicks on New Program under the Program menu bar
+    Then Admin should see red "*" mark beside mandatory field "Name"
 
-#   Scenario: Verify empty form submission
-#     Given Admin is on Program details form
-#     When Admin clicks save button without entering mandatory
-#     Then Admin gets message field is required
+  Scenario: Verify empty form submission
+    Given Admin is on Program details form
+    When Admin clicks save button without entering mandatory
+    Then Admin gets message field is required
 
-#   Scenario: Verify cancel button
-#     Given Admin is on Program details form
-#     When Admin clicks Cancel button
-#     Then Admin can see Program Details form disappears
+  Scenario: Verify cancel button
+    Given Admin is on Program details form
+    When Admin clicks Cancel button
+    Then Admin can see Program Details form disappears
 
-#   Scenario Outline: Verify enter program name
-#     Given Admin is on Program details form
-#     When Admin enters the Name in the text box from "<KeyOption>" and "<sheetname>"
-#     Then Admin can see the text entered
+  Scenario Outline: Verify enter program name
+    Given Admin is on Program details form
+    When Admin enters the Name in the text box from "<KeyOption>" and "<sheetname>"
+    Then Admin can see the text entered
 
-#     Examples:
-#       | KeyOption       | sheetname |
-#       | validatetextbox | Program   |
+    Examples:
+      | KeyOption       | sheetname |
+      | validatetextbox | Program   |
 
 #   Scenario Outline: Verify enter description
 #     Given Admin is on Program details form
