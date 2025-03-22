@@ -194,14 +194,17 @@ let reusablePage;
     expect(programDetailsPopUpPresent).toBeFalsy();  
   });
   
-  When('Admin enters the Name in the text box from {string} and {string}', async ({page}, arg, arg1) => {
+  // From: tests/Features/004_AddNewProgramFeature.feature:33:5
+  When('Admin enters the Name in the text box from {string} and {string}', async ({page}, keyoption, sheetname) => {
     // Step: When Admin enters the Name in the text box from "validatetextbox" and "Program"
-    // From: tests/Features/004_AddNewProgramFeature.feature:33:5
+    await program.enter_programname(keyoption,sheetname);
   });
   
+  // From: tests/Features/004_AddNewProgramFeature.feature:34:5
   Then('Admin can see the text entered', async ({page}) => {
-    // Step: Then Admin can see the text entered
-    // From: tests/Features/004_AddNewProgramFeature.feature:34:5
+    const actual_Text = await program.enteredText();
+     expect(actual_Text).toBeVisible();
+    
   });
   
   When('Admin enters the Description in text box from {string} and {string}', async ({page}, arg, arg1) => {
