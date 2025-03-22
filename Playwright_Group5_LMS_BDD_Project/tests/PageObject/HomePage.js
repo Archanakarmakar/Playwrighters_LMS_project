@@ -1,15 +1,15 @@
 const { expect } = require('@playwright/test');
 const { getDataByKeyOption } = require('../Utilities/ExcelUtils'); 
 const filepath = 'tests/TestData/PlayWright_Group5_Data.xlsx';
-const { ReusablePage } = require('../PageObject/ReusablePage');
+const { ReusablePage } = require('./ReusablePage');
 const sheetName = 'Dashboard';
 
-class DashboardPage {
+class HomePage {
     constructor(page)
     {
         this.page = page;
         this.title_allignment = page.locator('//span[text()=" LMS - Learning Management System "]');
-        this.dashboard_title = page.getByText(' LMS - Learning Management System ');
+        this.homePage_title = page.getByText(' LMS - Learning Management System ');
         this.navigation_bar = page.locator('//mat-toolbar');
         this.navigation_bar_order = page.locator('//mat-toolbar//div//button//span[1]');
         this.logout = page.getByText('Logout');
@@ -32,7 +32,7 @@ class DashboardPage {
 
     async getHeadertitle(){
 
-         return this.dashboard_title;
+         return this.homePage_title;
     }
 
     
@@ -69,4 +69,4 @@ class DashboardPage {
 
     
 }
-module.exports = { DashboardPage};
+module.exports = { HomePage};

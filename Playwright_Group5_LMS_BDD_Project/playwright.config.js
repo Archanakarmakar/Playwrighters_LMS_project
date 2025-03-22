@@ -12,9 +12,8 @@ import { defineBddConfig } from 'playwright-bdd';
  * @see https://playwright.dev/docs/test-configuration
  */
 const testDir = defineBddConfig({
-  features:['tests/Features/***/***.feature'],
- steps:['tests/StepDefinitions/***.js','tests/Hooks/Hooks.js'],
- tags: '@logout'
+ features:['tests/Features/***/***.feature'],
+ steps:['tests/StepDefinitions/***.js','tests/Hooks/Hooks.js']//,tags: '@logout'
 });
 module.exports = defineConfig({
   testDir,
