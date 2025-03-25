@@ -7,8 +7,6 @@ require('dotenv').config();
 class PaginationAndSorting {
     constructor(page){
         this.page = page;
-        this.nextLink = page.locator('//span[@class ="p-paginator-icon pi pi-angle-right"]');
-        this.lastLink = page.locator('//span[@class ="p-paginator-icon pi pi-angle-double-right"]');
         this.table = page.locator('.p-datatable-wrapper ng-star-inserted');
         this.ProgramNameCol =  page.locator('//th[2]')
         // this.sortType =  this.ProgramNameCol.getAttribute('aria-sort');
@@ -19,69 +17,71 @@ class PaginationAndSorting {
         this.ProgramStatus =  page.locator('//th[4]')
         this.ProgDes_cells = page.locator('//tr//td[3]');
         this.ProgStatus_cells = page.locator('//tr//td[4]');
-        this.previousLink = page.locator('//span[@class ="p-paginator-icon pi pi-angle-left"]');
-        this.firstLink = page.locator('//span[@class ="p-paginator-icon pi pi-angle-double-left"]')
-        this.batchNamecol = page.locator('//th[2]')
-        this.classTopicCol = page.locator('//th[3]')
-        this.classDesCol = page.locator('//th[4]')
-        this.class_statusCol = page.locator('//th[5]')
-        this.class_DateCol = page.locator('//th[6]')
-        this.staffNameCol = page.locator('//th[7]')
-        this.batchNameCell = page.locator('//tr//td[2]');
-        this.classTopicCell = page.locator('//tr//td[3]');
-        this.classDesCell = page.locator('//tr//td[4]');
-        this.class_statusCell = page.locator('//tr//td[5]')
-        this.class_DateCell = page.locator('//tr//td[6]')
-        this.staffNameCell = page.locator('//tr//td[7]')
+        this.nextLink = page.locator("//button[contains(@class, 'p-paginator-next')]");
+        this.lastLink = page.locator("//button[contains(@class, 'p-paginator-last')]");
+        this.previousLink = page.locator("//button[contains(@class, 'p-paginator-prev')]");
+        this.firstLink = page.locator("//button[contains(@class, 'p-paginator-first')]");
+        this.classByBatchNameSort =page.locator("//thead/tr/th[2]/p-sorticon/i");
+        this.classByTopicSort =page.locator("//thead/tr/th[3]/p-sorticon/i");
+        this.classByDescSort =page.locator("//thead/tr/th[4]/p-sorticon/i");
+        this.classByStatusSort = page.locator("//thead/tr/th[5]/p-sorticon/i");
+        this.classByDateSort = page.locator("//thead/tr/th[6]/p-sorticon/i");
+        this.classByStaffNameSort = page.locator("//thead/tr/th[7]/p-sorticon/i");
+        this.batchNameList = page.locator('//tr//td[2]');
+        this.classTopicList = page.locator('//tr//td[3]');
+        this.classDescList = page.locator('//tr//td[4]');
+        this.classStatusList = page.locator('//tr//td[5]')
+        this.classDateList = page.locator('//tr//td[6]')
+        this.staffNameList = page.locator('//tr//td[7]')
     }
 
-    async getbatchNamecol(){
-        return this.batchNamecol;
+    async getBatchNameCol(){
+        return this.classByBatchNameSort;
     }
 
-    async getclassTopicCol(){
-        return this.classTopicCol;
+    async getClassTopicCol(){
+        return this.classByTopicSort;
     }
 
-    async getclassDesCol(){
-        return this.classDesCol;
+    async getClassDescCol(){
+        return this.classByDescSort;
 
     } 
 
-    async getclass_statusCol(){
-        return this.class_statusCol;
+    async getClassStatusCol(){
+        return this.classByStatusSort;
     }
 
-    async getclass_DateCol(){
-        return this.class_DateCol;
+    async getClassDateCol(){
+        return this.classByDateSort;
     }
 
-    async getstaffNameCol(){
-        return this.staffNameCol;
+    async getStaffNameCol(){
+        return this.classByStaffNameSort;
     }
 
-    async getbatchNameCell(){
-        return this.batchNameCell;
+    async getBatchNameCell(){
+        return this.batchNameList;
     }
     
-    async getclassTopicCell(){
-        return this.classTopicCell;
+    async getClassTopicCell(){
+        return this.classTopicList;
     }
 
-    async getclassDesCell(){
-        return this.classDesCell;
+    async getClassDescCell(){
+        return this.classDescList;
     }
 
-    async getclass_statusCell(){
-        return this.class_statusCell;
+    async getClassStatusCell(){
+        return this.classStatusList;
     }
 
-    async getclass_DateCell(){
-        return this.class_DateCell;
+    async getClassDateCell(){
+        return this.classDateList;
     }
 
-    async getstaffNameCell(){
-        return this.staffNameCell;
+    async getStaffNameCell(){
+        return this.staffNameList;
     }
 
 
@@ -143,53 +143,59 @@ class PaginationAndSorting {
     }
     
     async click(ele){
-        await ele.click();;
+        await ele.click();
     }
 
+  
     async getNextLink(){
-        
- 
- 
-        if(expect(await this.nextLink).toBeDisabled()){
-            
-            console.log('Next Link disabled')
-        }
-       else{
-        this.nextLink.click();
-       }
-    }
-
-    async getNextLink1(){
  
         return this.nextLink;
     }
 
     async validateNextPageLink(){
-        const count = await this.paginationFooter.count();
-        for (let i = 0; i < count; i++){
+        await this.nextLink.scrollIntoViewIfNeeded();
+        while (await this.nextLink.isEnabled()) { 
             await this.nextLink.click();
-            if(expect (await this.nextLink).toBeDisabled()){
+            await this.page.waitForTimeout(1000); 
+        }
+        console.log('This is the last page');
+
+    }
+
+    async getPaginationNextLink() {
+        return this.nextLink; 
+    }
+    
+
+    async validatePreviousPageLink(){
+        const count = await this.paginationFooter.count();
+        for (let i = count-1; i > 0; i--){
+            await this.previousLink.click();
+            if(expect (await this.previousLink).toBeDisabled()){
                 console.log('This is the last page'); 
             }
             else{
-                continue;
-            }
-        }
-
-        }
-
-        async validatePreviousPageLink(){
-            const count = await this.paginationFooter.count();
-            for (let i = count-1; i > 0; i--){
-                await this.previousLink.click();
-                if(expect (await this.previousLink).toBeDisabled()){
-                    console.log('This is the last page'); 
-                }
-                else{
                     continue;
-                }
             }
+         }
+    }
+
+    async validateLastPageLink() {
+        await this.lastLink.scrollIntoViewIfNeeded();
+        await this.lastLink.click(); 
+        await this.page.waitForTimeout(1000); 
+    
+        // Verify that the Next Page link is disabled (meaning we're on the last page)
+        const isNextDisabled = !(await this.nextLink.isEnabled());
+        
+        if (isNextDisabled) {
+            console.log('This is the last page');
+        } else {
+            console.log('Error: Next Page link is still enabled');
         }
+    
+        return isNextDisabled; // Return the validation result
+    }
 
     async getProgStatus_cells(){
         return this.ProgStatus_cells;
@@ -199,7 +205,7 @@ class PaginationAndSorting {
         return this.lastLink;
     }
 
-    async getPreviousLink(){
+    async getPaginationPreviousLink(){
         if((await this.previousLink).isDisabled()){
             
             console.log('Previous Link disabled')
@@ -209,14 +215,35 @@ class PaginationAndSorting {
        }
     }
 
-    async getPreviousLink1(){
+    async getPreviousPageLink(){
         return this.previousLink;
     }
 
-    async getFirstLink(){
-        return this.firstLink;
+    async isOnLastPage() {
+        return !(await this.nextLink.isEnabled());
     }
 
+    async navigateToPreviousPage() {
+        await this.previousLink.click(); 
+        await this.page.waitForTimeout(1000); 
+    }
+    
+    async isPreviousPageEnabled() {
+        return await this.previousLink.isEnabled();
+    }
+
+    async getFirstPageLink(){
+        return this.firstLink;
+    }
+    async navigateToFirstPage() {
+        await this.firstLink.click(); 
+        await this.page.waitForTimeout(1000); 
+    }
+
+    async isOnFirstPage() {
+        return !(await this.previousLink.isEnabled());
+    }
+   
     async pagination_Asc_Sorting(ele){
         
         const count = await this.paginationFooter.count();

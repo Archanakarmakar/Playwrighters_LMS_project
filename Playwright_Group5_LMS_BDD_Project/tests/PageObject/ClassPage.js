@@ -7,8 +7,10 @@ const filepath = 'tests/TestData/PlayWright_Group5_Data.xlsx';
 class ClassPage{
     constructor(page){
         this.page = page;
+        this.program_btn = page.getByRole('button', { name: 'Program' });
         this.class_btn = page.getByRole('button', { name: 'Class' });
         this.headerClass = page.getByText('Manage Class');
+        this.headerProgram = page.getByText('Manage Program');
         this.titleClass = page.getByText(' LMS - Learning Management System ');
         this.searchBar = page.getByPlaceholder('Search...');
         this.tableColumnHeaders = page.locator("//thead[@class='p-datatable-thead']/tr/th");
@@ -28,7 +30,7 @@ class ClassPage{
         this.classTopicInputField = page.locator("//label[text()='Class Topic ']");
         this.classTopic = page.locator("//input[@id='classTopic']");
         this.classDescriptionInputField = page.locator("//label[text()='Class Description']");
-        this.classDescription = page.locator("//input[@id='classDescription']");
+        this.classDescriptionField = page.locator('#classDescription');
         this.selectClassDatesInputField = page.locator("//label[text()=' Select Class Dates ']");
         this.calenderBtn = page.locator("//p-calendar//button");
         this.selectClassDate = page.locator("//table[contains(@class, 'p-datepicker-calendar')]//tbody//span[not(contains(@class, 'p-disabled'))]");
@@ -41,18 +43,40 @@ class ClassPage{
         this.statusInputField = page.locator("//lable[text()='Status']");
         this.activeStatus = page.locator("//p-radiobutton[@ng-reflect-input-id='Active']");
         this.createSuccesMessage= page.getByRole('alert');
+        this.weekendsDate = page.locator("//table[contains(@class, 'p-datepicker-calendar')]//tr//td[(position()=1 or position()=7) and contains(@class, 'p-disabled')]");
+        this.commentsField = page.locator("#classComments");
+        this.classNotesField = page.locator("#classNotes");
+        this.classRecordingField = page.locator("#classRecordingPath");
+        this.errorMessage = page.locator("//div//small");
+        this.saveClassBtn = page.getByRole('button', { name: 'Save'});
 
+        this.classDetailsForm =page.locator("//div[@role='dialog']");
+
+        this.searchBox = page.locator("//input[@id='filterGlobal']");
+        this.searchBatchName =page.locator("//tbody/tr[1]/td[2]");
+        this.searchClassTopic =page.locator("//tbody/tr[1]/td[3]");
+        this.searchStaffName =page.locator("//tbody/tr[1]/td[7]");
+        this.batchNameList = page.locator("//tbody/tr/td[2]");
+        this.classTopicList = page.locator("//tbody/tr/td[3]");
 
     }
 
     async clickClass(){
-        return this.class_btn;
+        return await this.class_btn;
+    }
+
+    async clickProgram(){
+        return await this.program_btn;
     }
     
     async validatePageClass(){
        const actualtext =  await this.headerClass.textContent();
         return actualtext;
     }
+    async validatePageProgram(){
+        const actualtext =  await this.headerProgram.textContent();
+         return actualtext;
+     }
 
     async validateTitleClass(){
         const actualTitle = await this.titleClass.textContent();
@@ -251,6 +275,7 @@ class ClassPage{
 
         await this.saveBtn.click();
     }
+
     async validateCreateSuccessMessage(){
         return await this.createSuccesMessage.textContent();
     }
@@ -260,6 +285,7 @@ class ClassPage{
         await this.calenderBtn.click();
         const select_Date = []
         const list_dates = await this.selectClassDate.count();
+         
         for( let i = 0; i< list_dates; i++)
         {
             const date  = await this.selectClassDate.nth(i).textContent();
@@ -270,7 +296,7 @@ class ClassPage{
         let num = date_count;
         
         const total_no_of_classes = num.toString();
-         
+        
         for (let i = 0; i < date_count; i++) {
             while(i <= date_count-1){
                 const date = await this.selectClassDate.nth(i).textContent();
@@ -281,7 +307,198 @@ class ClassPage{
         await this.staffName.click();
         return total_no_of_classes;
 
-    }    
+    }  
+    async clickOnCalenderBtn(){
+        await this.calenderBtn.scrollIntoViewIfNeeded();
+        await this.calenderBtn.click();
+
+    }  
+
+    async weekendsDatePicker(){
+        return this.weekendsDate;
+    }
+
+    async enterOptionalFieldsData(keyoption,sheetname){
+        const filepath = 'tests/TestData/PlayWright_Group5_Data.xlsx';
+        const testdata = getDataByKeyOption(filepath,sheetname,keyoption);
+        
+        let classDescription = testdata['classDesc'];
+        let comments = testdata['Comments'];
+        let classNotes = testdata['Notes'];
+        let classRecordings =testdata['Recordings'];
+        await this.page.waitForSelector('#classDescription', { timeout: 30000 });
+        await this.classDescriptionField.fill(classDescription);
+        await this.commentsField.scrollIntoViewIfNeeded();
+        await this.commentsField.fill(comments);
+        await this.classNotesField.fill(classNotes);
+        await this.classRecordingField.fill(classRecordings);
+             
+        await this.page.waitForLoadState('networkidle'); // Ensure page is stable
+        await this.saveClassBtn.waitFor({ state: 'visible' });      
+        await this.saveClassBtn.click();
+         
+    }
+
+
+    async isDisplayedErrorMessage(){  
+        const countErrorMessages =  await this.errorMessage.count();
+        for (let i = 0; i < countErrorMessages; i++) {
+           console.log(await expect (this.errorMessage.nth(i)).toBeVisible());
+        } 
+
+        // const countErrorMessages = await this.errorMessage.count();
+        // console.log("countErrorMessages-------------"+countErrorMessages)
+        // for (let i = 0; i < countErrorMessages; i++) {
+        //     const isVisible = await this.errorMessage.nth(i).isVisible();
+        //     console.log("Error Message" +isVisible);
+        //     if (isVisible) {
+        //         return true;
+        //     }
+        // }
+        // return false;
+   }
+   async validateErrorMessage(){
+    await this.page.waitForSelector("//small[contains(text(), 'Batch Name is required.')]", { timeout: 5000 });
+    const errorMessages = await this.page.locator("//div//small");
+    const errorMessageText = await errorMessages.allTextContents();
+    return errorMessageText;
+
+   }
+
+
+   async clickOnSaveBtn(){
+    await this.saveClassBtn.scrollIntoViewIfNeeded();
+    await this.saveClassBtn.click();
+   }
+
+   async clickOnCancelBtn(){
+    await this.cancelBtn.click();
+
+   }
+
+   async disappearsClassDetailsForm() {
+    const isPopupDisappeared = await this.page.waitForSelector("//div[@role='dialog']", { state: 'hidden' }).then(() => true).catch(() => false);
+    console.log(isPopupDisappeared);
+    return isPopupDisappeared;
+   }
+
+   /**************** Search **********/
+   async enterBatchNameInSearchTextBox() {
+    if (this.page.isClosed()) {
+        throw new Error("Page is closed. Cannot interact with search box.");
+    }
+
+    // Wait up to 10 seconds for the overlay to disappear
+    try {
+        await this.page.waitForSelector('.cdk-overlay-backdrop', { state: 'detached', timeout: 10000 });
+    } catch (error) {
+        console.warn("Overlay did not disappear within 10 seconds, proceeding anyway...");
+    }
+
+    // Extract batch name safely
+    const batchElement = await this.page.locator("//tbody/tr/td[2]").first();
+    await batchElement.waitFor({ state: 'visible', timeout: 5000 });
+    const batchName = await batchElement.textContent();
+
+    if (!batchName) {
+        throw new Error("Batch name is empty or not found in the table.");
+    }
+    console.log("Batch Name: " + batchName);
+    const searchBox = this.page.locator('xpath=//input[@id="filterGlobal"]');
+
+    // Ensure the search box is visible and enabled
+    await searchBox.waitFor({ state: 'visible', timeout: 5000 });
+
+    // Try clicking outside to close overlay before interacting
+    await this.page.mouse.click(0, 0);
+
+    // Click, clear, and enter the batch name
+    await searchBox.click();
+    await this.page.waitForTimeout(500); // Small delay for stability
+    await searchBox.fill(batchName);
+
+    console.log(`Batch Name entered: ${batchName}`);
+    return batchName;
+}
+
+async enterClassTopicInSearchTextBox(){
+    const firstClassTopicElement =await this.searchClassTopic.first(); // Use a proper selector here
+    await firstClassTopicElement.waitFor({ state: 'visible', timeout: 5000 });
+    const classTopic = await firstClassTopicElement.textContent();
+    console.log("Class Topic: " + classTopic);
+
+    const searchBox = await this.searchBox; // Use a proper selector here
+
+    await searchBox.waitFor({ state: 'visible', timeout: 5000 });
+    await this.page.mouse.click(0, 0);
+    await searchBox.click(); 
+    await searchBox.fill(classTopic); 
+
+    console.log(`Class Topic entered: ${classTopic}`);
+
+    return classTopic;
+
+}
+async enterStaffNameInSearchTextBox(){
+    const firstStaffNameElement =await this.searchStaffName.first(); // Use a proper selector here
+    await firstStaffNameElement.waitFor({ state: 'visible', timeout: 5000 });
+    const staffName = await firstStaffNameElement.textContent();
+    console.log("Staff Name: " + staffName);
+
+    const searchBox = await this.searchBox; // Use a proper selector here
+
+    await searchBox.waitFor({ state: 'visible', timeout: 5000 });
+    await this.page.mouse.click(0, 0);
+    await searchBox.click(); 
+    await searchBox.fill(staffName); 
+
+    console.log(`Staff Name entered: ${staffName}`);
+
+    return staffName;
+
+
+}
+
+
+
+async getBatchNamesFromTable() {
+    const batchNameElements = await this.page.$$('//tbody/tr/td[2]'); // Using $$ to get all matching elements
+
+    const batchNames = [];
+
+    // Iterate over each batch name element and extract the text
+    for (const batchElement of batchNameElements) {
+        const text = await batchElement.textContent(); 
+        batchNames.push(text.trim()); // Trim and add the text to the batchNames array
+    }
+
+    return batchNames;
+}
+
+async getClassTopicsFromTable() {
+    const classTopicElements = await this.page.$$('//tbody/tr/td[3]'); 
+
+    const classTopics = [];
+    for (const classTopicEle of classTopicElements) {
+        const text = await classTopicEle.textContent(); 
+        classTopics.push(text.trim()); 
+    }
+
+    return classTopics;
+}
+
+async getStaffNamesFromTable() {
+    const staffNameElements = await this.page.$$('//tbody/tr/td[7]'); 
+
+    const staffNames = [];
+    for (const staffNameEle of staffNameElements) {
+        const text = await staffNameEle.textContent(); 
+        staffNames.push(text.trim()); 
+    }
+
+    return staffNames;
+}
+        
 
 }
 
