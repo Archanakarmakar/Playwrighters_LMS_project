@@ -2,6 +2,9 @@ import { createBdd } from "playwright-bdd";
 const {Given, When, Then} = createBdd();
 const { expect } = require('@playwright/test');
 const { POManager} = require('../PageObject/POManager');
+const DataBuilder = require('../Utilities/DataBuilder');
+const builder = new DataBuilder();
+const fs = require('fs');
 
 let loginPage;
 let homePage;
@@ -91,9 +94,9 @@ let reusablePage;
     console.log("Admin saw Add New Program as sub menu in menu bar: "+actualOverLayText);
   });
 
-//----------004_AddNewProgramFeature Scenarios start here----------->
+//----------002_AddNewProgramFeature Scenarios start here----------->
 
-// From: tests/Features/004_AddNewProgramFeature.feature:4:5
+// From: tests/Features/002_AddNewProgramFeature.feature:4:5
   Given('Admin is on program module after reaching home', async ({page}) => {
     const pageManager = new POManager(page);
     reusablePage = pageManager.getCommonUtilPage();
@@ -102,7 +105,7 @@ let reusablePage;
     console.log('Admin is on program page');
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:7:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:7:5
   Given('Admin is on Program module', async ({page}) => {
     const pageManager = new POManager(page);
     reusablePage = pageManager.getCommonUtilPage();
@@ -112,7 +115,7 @@ let reusablePage;
     
   });
 
-  // From: tests/Features/004_AddNewProgramFeature.feature:8:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:8:5
   When('Admin clicks on New Program under the Program menu bar', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
@@ -120,34 +123,31 @@ let reusablePage;
     await programPage.clickOnAddNewProgram();
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:9:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:9:5
   Then('Admin should see pop up window for program details', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
     expect(await programPage.isProgramDetailsPopUpDisplayed()).toBe(true);   
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:14:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:14:5
   Then('Admin should see window title as {string}', async ({page}, programPopUpTitle) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
     reusablePage = pageManager.getCommonUtilPage();
     const actualHeaderText = await reusablePage.getHeaderText(programPage.programDetailsPopUpHeader);
     expect(actualHeaderText).toEqual(programPopUpTitle);
-    // Step: Then Admin should see window title as "Program Details"
-    
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:19:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:19:5
   Then('Admin should see red asterik mark beside mandatory field {string}', async ({page}, mandatoryField) => {
-    // Step: Then Admin should see red asterik mark beside mandatory field "Name"
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
     const validateField = programPage.validateMandatoryFieldAndRedAsterik.bind(programPage); // ✅ Bind context
     validateField(mandatoryField);
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:22:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:22:5
   Given('Admin is on Program details form', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
@@ -156,7 +156,7 @@ let reusablePage;
     
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:23:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:23:5
   When('Admin clicks save button without entering mandatory', async ({page}) => {
     // Step: When Admin clicks save button without entering mandatory
     const pageManager = new POManager(page);
@@ -165,7 +165,7 @@ let reusablePage;
     await reusablePage.click(programPage.programDetailsPopUp_Save);
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:24:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:24:5
   Then('Admin gets message field is required', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
@@ -176,7 +176,7 @@ let reusablePage;
 
   });
   
-   // From: tests/Features/004_AddNewProgramFeature.feature:28:5
+   // From: tests/Features/002_AddNewProgramFeature.feature:28:5
   When('Admin clicks Cancel button', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
@@ -184,7 +184,7 @@ let reusablePage;
     await reusablePage.click(programPage.programDetailsPopUp_CancelBtn);  
   });
 
-  // From: tests/Features/004_AddNewProgramFeature.feature:29:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:29:5
   Then('Admin can see Program Details form disappears', async ({page}) => {
     // Step: Then Admin can see Program Details form disappears
     const pageManager = new POManager(page);
@@ -194,61 +194,89 @@ let reusablePage;
     expect(programDetailsPopUpPresent).toBeFalsy();  
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:33:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:33:5
   When('Admin enters the Name in the text box from {string} and {string}', async ({page}, keyoption, sheetname) => {
     // Step: When Admin enters the Name in the text box from "validatetextbox" and "Program"
     await program.enter_programname(keyoption,sheetname);
   });
   
-  // From: tests/Features/004_AddNewProgramFeature.feature:34:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:34:5
   Then('Admin can see the text entered', async ({page}) => {
     const actual_Text = await program.enteredText();
      expect(actual_Text).toBeVisible();
     
   });
   
-  When('Admin enters the Description in text box from {string} and {string}', async ({page}, arg, arg1) => {
+  // From: tests/Features/002_AddNewProgramFeature.feature:42:5
+  When('Admin enters the Description in text box from {string} and {string}', async ({page}, validtextbox, Program) => {
     // Step: When Admin enters the Description in text box from "validatetextbox" and "Program"
-    // From: tests/Features/004_AddNewProgramFeature.feature:42:5
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.enter_programDescription(validtextbox,Program);
   });
   
+  // From: tests/Features/002_AddNewProgramFeature.feature:43:5
   Then('Admin can see the text entered in description box', async ({page}) => {
-    // Step: Then Admin can see the text entered in description box
-    // From: tests/Features/004_AddNewProgramFeature.feature:43:5
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    const actual_Text = await programPage.enteredProgramDesc();
+    expect(actual_Text).toBeVisible();
   });
   
+  // From: tests/Features/002_AddNewProgramFeature.feature:51:5
   When('Admin selects the status of the program by clicking on the radio button {string}', async ({page}, arg) => {
-    // Step: When Admin selects the status of the program by clicking on the radio button "(Active/InActive)"
-    // From: tests/Features/004_AddNewProgramFeature.feature:51:5
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickActiveStatus();
   });
   
+  // From: tests/Features/002_AddNewProgramFeature.feature:52:5
   Then('Admin can see {string} status selected', async ({page}, arg) => {
-    // Step: Then Admin can see 'Active/Inactive' status selected
-    // From: tests/Features/004_AddNewProgramFeature.feature:52:5
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.validateActiveStatus();   
   });
   
-  When('Admin enter valid details for mandatory fields from {string} and {string} and Click on save button', async ({page}, arg, arg1) => {
-    // Step: When Admin enter valid details for mandatory fields from "validInput" and "Program" and Click on save button
-    // From: tests/Features/004_AddNewProgramFeature.feature:56:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:56:5
+  When('Admin enter valid details for mandatory fields and Click on save button', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.enterValidProgramName();
+    await programPage.enterProgramDesc(programPage,"valid_programdesc_one");
+    await programPage.clickActiveStatus();
+    await programPage.clickSaveProgram();
   });
   
+  // From: tests/Features/002_AddNewProgramFeature.feature:57:5
   Then('Admin gets a message {string}', async ({page}, arg) => {
-    // Step: Then Admin gets a message 'Successful Program created'
-    // From: tests/Features/004_AddNewProgramFeature.feature:57:5
-  });
-  
-  // From: tests/Features/004_AddNewProgramFeature.feature:70:5
-  When('Admin Click on X button', async ({page}) => {
-    // Step: When Admin Click on X button
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await expect(programPage.programSuccessMsg).toBeVisible();
     
   });
+  
+  // From: tests/Features/002_AddNewProgramFeature.feature:70:5
+  When('Admin Click on X button', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickXProgram();
+  });
 
-  When('Admin searches with newly created Program Name sent from {string} and {string}', async ({page}, arg, arg1) => {
-    // Step: When Admin searches with newly created Program Name sent from "validInput" and "Program"
-    // From: tests/Features/004_AddNewProgramFeature.feature:75:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:75:5
+  When('Admin searches with newly created Program Name', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickOnProgram();
+    const currentProgramName = builder.loadCurrentProgramName().trim();
+    await programPage.searchRecord("Program Name",currentProgramName);
+
   });
   
-  Then('Records of the newly created  Program Name is displayed and match the data entered from {string} and {string}', async ({page}, arg, arg1) => {
-    // Step: Then Records of the newly created  Program Name is displayed and match the data entered from "validInput" and "Program"
-    // From: tests/Features/004_AddNewProgramFeature.feature:76:5
+  // From: tests/Features/002_AddNewProgramFeature.feature:76:5
+  Then('Records of the newly created  Program Name is displayed and match the data entered', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    const currentProgramName = builder.loadCurrentProgramName().trim();
+    const foundValue = await programPage.searchRecord("Program Name",currentProgramName);
+    expect(foundValue).toEqual(currentProgramName);
   });
