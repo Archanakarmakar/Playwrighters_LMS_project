@@ -1,5 +1,9 @@
 const { getDataByKeyOption } = require('../Utilities/ExcelUtils');  
 const { expect } = require('playwright/test');
+const filepath = 'tests/TestData/PlayWright_Group5_Data.xlsx';
+const DataBuilder = require('../Utilities/DataBuilder');
+const builder = new DataBuilder();
+const fs = require('fs');
 
 class ProgramPage {
 
@@ -23,7 +27,15 @@ class ProgramPage {
         this.programNameError = page.locator('(//../small)[1]');
         this.programDescriptionError = page.locator('(//../small)[2]');
         this.programStatusError = page.locator('(//../small)[3]');
-        this.add_programname = page.locator('#programName');
+        this.programname_txtBox = page.locator('#programName');
+        this.programDesc_txtBox = page.locator('#programDescription');
+        this.activeStatusRadioButton = page.locator('.p-radiobutton-box').first();
+        this.inactiveStatusRadioButton = page.locator('.p-radiobutton-box').nth(1);
+        this.checkedRadioButton = page.locator('.p-radiobutton-checked');
+        this.checkedActiveStatus = page.locator('input#Active');
+        this.checkedInactiveStatus = page.locator('input#Inactive');
+        this.programSuccessMsg = page.locator('div.p-toast-summary');
+        this.searchBox = page.getByPlaceholder('Search...');
         // Define the mandatory fields and their associated label and asterisk selectors
         this.programPageMandatoryFields = [
         { label: 'Name', labelSelector: 'label[for="programName"]', asteriskSelector: '(//../span[text()="*"])[1]' },
@@ -34,6 +46,17 @@ class ProgramPage {
         //this .addNewProgramBtn =page.getByRole('menuitem', { name: 'Add New Program' });
     }
 
+    // Static cache for loaded data
+    static testData = null;
+
+    // Static method to load data once
+  static loadTestData() {
+    if (!this.testData) {
+      const rawData = fs.readFileSync('tests/TestData/program-fields.json');
+      this.testData = JSON.parse(rawData);
+    }
+    return this.testData;
+  }
     async goTo(){
         return this.page.goto('https://playwright-frontend-app-a9ea85794ad9.herokuapp.com/program');
     }
@@ -125,17 +148,114 @@ class ProgramPage {
     // Check if the asterisk color is red
     await expect(asteriskLocator).toHaveCSS('color', 'rgb(255, 0, 0)'); // RGB value for red
   }
-    
+//using excel 
   async enter_programname(Keyoption,sheetname){
     const testData = getDataByKeyOption(filepath,sheetname,Keyoption);
     const program_name = testData['Input_name'];
     console.log("program_name to enter is :"+program_name);
-    await this.add_programname.fill(program_name);
-    
+    await this.programname_txtBox.fill(program_name);  
   }
-  async enteredText(){
-   return this.add_programname;
+  
+  //using excel
+  async enter_programDescription(Keyoption,sheetname){
+    const testData = getDataByKeyOption(filepath,sheetname,Keyoption);
+    const program_Desc = testData['Input_desc'];
+    console.log("program_Desc to enter is :"+program_Desc);
+    await this.programDesc_txtBox.fill(program_Desc);
   }
+
+  //using json 
+  async enterProgramDesc(page, label){
+    const value = ProgramPage.getFieldValue(label); // Call static method
+    //await page.fill(this.programDesc_txtBox, value);
+    await this.programDesc_txtBox.fill(value);
+  }
+
+  async enteredProgramName(){
+    return this.programname_txtBox;
+   }
+ 
+   async enteredProgramDesc(){
+     return this.programDesc_txtBox;
+   }
+ 
+  async clickActiveStatus(){
+     await expect(this.activeStatusRadioButton).toBeEnabled();
+     await this.activeStatusRadioButton.click();
+  }
+
+  async clickinActiveStatus(){
+    await expect(this.inactiveStatusRadioButton).toBeVisible();
+    await expect(this.inactiveStatusRadioButton).toBeEnabled();
+    await this.inactiveStatusRadioButton.click();
+  }
+
+  async clickSaveProgram(){
+    await this.programDetailsPopUp_Save.click();
+  }
+  async clickXProgram(){
+    await this.programDetailsPopUpCloseBtn.click();
+  }
+
+  async validateActiveStatus(){
+    if(this.checkedRadioButton.isVisible()){
+        await expect(this.checkedActiveStatus).toHaveAttribute('aria-checked', 'true');
+    }
+  }
+
+  async validateInactiveStatus(){
+    if(this.checkedRadioButton.isVisible()){
+        await expect(this.checkedInactiveStatus).toHaveAttribute('aria-checked', 'true');
+    }
+  }
+
+  async enterValidProgramName(){
+    const validProgramName = builder.getProgramName();
+    //this.currentPrgmName = validProgramName;
+    console.log("validProgramName : "+validProgramName);
+    await this.programname_txtBox.fill(validProgramName); 
+  }
+
+  // Static getter (no need for async here since we're using sync file read)
+  static getFieldValue(label) {
+    const data = this.loadTestData();
+    const field = data.mandatoryFields.find(f => f.label === label);
     
+    if (!field) throw new Error(`Field "${label}" not found in test data`);
+    
+    console.log(`Retrieved value for ${label}: ${field.value}`);
+    return field.value;
+  }
+
+  // Instance method (requires page)
+  async enterFieldValue(page, label) {
+    const value = ProgramPage.getFieldValue(label); // Call static method
+    await page.fill('#program-field', value);
+  }
+
+// Helper method to get column index by key
+getColumnIndex(key) {
+    const columnMap = {
+        'Program Name': 2,
+        'Program Description': 3,
+        'Program Status': 4
+    };
+    return columnMap[key] || 1; // Default to first column if key not found
+}
+
+async searchRecord(key,value) {
+    try {
+        const stringValue = String(value);
+        await this.searchBox.fill(stringValue); // 1. Enter search value
+        const actualValue = this.page.locator(`//*/td[text()="${stringValue}"]`).textContent(); // 2. Find the matching row and its content
+        return actualValue;
+
+    } catch (error) {
+        console.error(`Search failed: ${error}`);
+        return false;
+    }
+}
+
+  
 }
 module.exports = {ProgramPage};
