@@ -23,7 +23,7 @@ let reusablePage;
   Given('Admin is on home page after Login', async ({page}) => {
     const pageManager = new POManager(page);
     //----remove code for login after merging--------------->
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.navigate();
     await reusablePage.login();
     console.log('Admin is on home page after Login');
@@ -78,7 +78,7 @@ let reusablePage;
   // From: tests/Features/001_ProgramNavigationMenuBar.feature:28:9
   Given('Admin is on program page', async ({page}) => {
     const pageManager = new POManager(page);
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.navigate();
     await reusablePage.login();
     console.log('Admin is on program page');
@@ -99,7 +99,7 @@ let reusablePage;
 // From: tests/Features/002_AddNewProgramFeature.feature:4:5
   Given('Admin is on program module after reaching home', async ({page}) => {
     const pageManager = new POManager(page);
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.navigate();
     await reusablePage.login();
     console.log('Admin is on program page');
@@ -108,7 +108,7 @@ let reusablePage;
   // From: tests/Features/002_AddNewProgramFeature.feature:7:5
   Given('Admin is on Program module', async ({page}) => {
     const pageManager = new POManager(page);
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.navigate();
     await reusablePage.login();
     console.log('Admin is on program module');
@@ -134,7 +134,7 @@ let reusablePage;
   Then('Admin should see window title as {string}', async ({page}, programPopUpTitle) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     const actualHeaderText = await reusablePage.getHeaderText(programPage.programDetailsPopUpHeader);
     expect(actualHeaderText).toEqual(programPopUpTitle);
   });
@@ -161,7 +161,7 @@ let reusablePage;
     // Step: When Admin clicks save button without entering mandatory
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.click(programPage.programDetailsPopUp_Save);
   });
   
@@ -169,7 +169,7 @@ let reusablePage;
   Then('Admin gets message field is required', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
-    reusablePage = pageManager.getCommonUtilPage();
+    reusablePage = pageManager.getReusablePage();
     await reusablePage.assertLocatorContainsText(programPage.programNameError,"Program name is required.");
     await reusablePage.assertLocatorContainsText(programPage.programDescriptionError,"Description is required.");
     await reusablePage.assertLocatorContainsText(programPage.programStatusError,"Status is required.");
@@ -180,7 +180,7 @@ let reusablePage;
   When('Admin clicks Cancel button', async ({page}) => {
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
-    reusablePage = pageManager.getCommonUtilPage()
+    reusablePage = pageManager.getReusablePage()
     await reusablePage.click(programPage.programDetailsPopUp_CancelBtn);  
   });
 
@@ -189,7 +189,7 @@ let reusablePage;
     // Step: Then Admin can see Program Details form disappears
     const pageManager = new POManager(page);
     programPage = pageManager.getProgramPage();
-    reusablePage = pageManager.getCommonUtilPage()
+    reusablePage = pageManager.getReusablePage()
     const programDetailsPopUpPresent = await programPage.isProgramDetailsPopUpPresent();
     expect(programDetailsPopUpPresent).toBeFalsy();  
   });
@@ -282,62 +282,102 @@ let reusablePage;
   });
 
   //------------004_DeleteProgram Scenarios start here ---------------------------------->
-  When('Admin clicks on program in home page and admin lands on Manage program Page', async ({}) => {
-    // Step: When Admin clicks on program in home page and admin lands on Manage program Page
-    // From: tests/Features/004_DeleteProgram.feature:5:1
+  
+  // From: tests/Features/004_DeleteProgram.feature:10:1
+  When('Admin clicks on delete button for a program', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickOnProgram();
+    await programPage.isOverlayDisplayed();
+    const currentProgramName = builder.loadCurrentProgramName().trim();
+    const foundValue = await programPage.searchRecord("Program Name",currentProgramName);
+    await programPage.deleteFirstProgram(page);
+    
   });
   
-  When('Admin clicks on delete button for a program', async ({}) => {
-    // Step: When Admin clicks on delete button for a program
-    // From: tests/Features/004_DeleteProgram.feature:10:1
+  // From: tests/Features/004_DeleteProgram.feature:11:1
+  Then('Admin will get confirm deletion popup', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    expect(programPage.popUp_confirmDeletion).toBeVisible();
+    
   });
   
-  Then('Admin will get confirm deletion popup', async ({}) => {
-    // Step: Then Admin will get confirm deletion popup
-    // From: tests/Features/004_DeleteProgram.feature:11:1
+  Given('Admin is on Confirm deletion form', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    reusablePage = pageManager.getReusablePage();
+    await reusablePage.navigate();
+    await reusablePage.login();
+    await programPage.clickOnProgram();
+    await programPage.isOverlayDisplayed();
+    const currentProgramName = builder.loadCurrentProgramName().trim();
+    const foundValue = await programPage.searchRecord("Program Name",currentProgramName);
+    await programPage.deleteFirstProgram(page);
   });
   
-  Given('Admin is on Confirm deletion form', async ({}) => {
-    // Step: Given Admin is on Confirm deletion form
-    // From: tests/Features/004_DeleteProgram.feature:15:1
+  // From: tests/Features/004_DeleteProgram.feature:16:1
+  When('Admin clicks on {string} button', async ({page}, action) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickOnConfirmDeletionPopUp(page,action);
   });
   
-  When('Admin clicks on {string} button', async ({}, arg) => {
-    // Step: When Admin clicks on "Yes" button
-    // From: tests/Features/004_DeleteProgram.feature:16:1
+  // From: tests/Features/004_DeleteProgram.feature:17:1
+  Then('Admin can see {string} message', async ({page}, successMsg) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    reusablePage = pageManager.getReusablePage();
+    await reusablePage.assertLocatorContainsText(programPage.popUpSuccessMsg, successMsg)
   });
   
-  Then('Admin can see {string} message', async ({}, arg) => {
-    // Step: Then Admin can see 'Successful Program Deleted' message
-    // From: tests/Features/004_DeleteProgram.feature:17:1
+   // From: tests/Features/004_DeleteProgram.feature:22:1
+  When('Admin Searches for {string}', async ({page}, arg) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    const currentProgramName = builder.loadCurrentProgramName().trim();
+    const foundValue = await programPage.searchRecord("Program Name",currentProgramName);
+   
   });
   
-  When('Admin Searches for {string}', async ({}, arg) => {
-    // Step: When Admin Searches for "Deleted Program name"
-    // From: tests/Features/004_DeleteProgram.feature:22:1
+  // From: tests/Features/004_DeleteProgram.feature:23:1
+  Then('There should be zero results.', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await program.searchAssertion();
+    
   });
   
-  Then('There should be zero results.', async ({}) => {
-    // Step: Then There should be zero results.
-    // From: tests/Features/004_DeleteProgram.feature:23:1
-  });
-  
+  // From: tests/Features/004_DeleteProgram.feature:27:1
   Given('Admin is on Program Confirm Deletion Page after selecting a program to delete', async ({}) => {
-    // Step: Given Admin is on Program Confirm Deletion Page after selecting a program to delete
-    // From: tests/Features/004_DeleteProgram.feature:27:1
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    reusablePage = pageManager.getReusablePage();
+    await reusablePage.navigate();
+    await reusablePage.login();
+    await programPage.clickOnProgram();
+    await programPage.isOverlayDisplayed();
+    await programPage.deleteFirstProgram(page);
   });
   
-  When('Admin clicks on No button', async ({}) => {
-    // Step: When Admin clicks on No button
-    // From: tests/Features/004_DeleteProgram.feature:28:1
+  When('Admin clicks on No button', async ({page}) => {
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    await programPage.clickOnConfirmDeletionPopUp(page,action);
   });
 
+  // From: tests/Features/004_DeleteProgram.feature:29:1
   Then('Admin can see Confirmation form disappears', async ({}) => {
-    // Step: Then Admin can see Confirmation form disappears
-    // From: tests/Features/004_DeleteProgram.feature:29:1
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    expect (programPage.deleteConfirmation).toBeFalsy();
+    
   });
   
+  // From: tests/Features/004_DeleteProgram.feature:35:1
   Then('Admin can see Confirm Deletion form disappear', async ({}) => {
     // Step: Then Admin can see Confirm Deletion form disappear
-    // From: tests/Features/004_DeleteProgram.feature:35:1
+    const pageManager = new POManager(page);
+    programPage = pageManager.getProgramPage();
+    expect (programPage.deleteConfirmation).toBeFalsy();
   });
