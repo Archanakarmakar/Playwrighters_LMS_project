@@ -9,6 +9,7 @@ let classPage;
 //Scenario 
 When('Admin clicks on the edit icon', async function({})  {
   classPage = await this.pageManager.getClassPage();
+  await this.page.waitForTimeout(1000);
   classPage.clickEditIcon();
    
   });

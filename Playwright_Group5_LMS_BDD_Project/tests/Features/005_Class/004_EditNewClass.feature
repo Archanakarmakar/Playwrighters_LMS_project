@@ -5,22 +5,22 @@ Background: Admin is on the Manage Class page after login
 Given Admin is on the Manage class page after login
 
 @EditClassValidation @ClassTC_019
-# Scenario: Validate row level edit icon
-# Given Admin is on the Manage class page
-# When Admin clicks on the edit icon 
-# Then A new pop up with class details appears 
+Scenario: Validate row level edit icon
+Given Admin is on the Manage class page
+When Admin clicks on the edit icon 
+Then A new pop up with class details appears 
 
 @EditClassValidation @ClassTC_020
-# Scenario: Check disabled  batch name
-# Given Admin is on the Manage class page
-# When Admin clicks on the edit icon 
-# Then Admin should see batch name field is disabled
+Scenario: Check disabled  batch name
+Given Admin is on the Manage class page
+When Admin clicks on the edit icon 
+Then Admin should see batch name field is disabled
 
 @EditClassValidation @ClassTC_021
-# Scenario: Check disabled class topic
-# Given Admin is on the Manage class page
-# When Admin clicks on the edit icon
-# Then Admin should see class topic field is disabled 
+Scenario: Check disabled class topic
+Given Admin is on the Manage class page
+When Admin clicks on the edit icon
+Then Admin should see class topic field is disabled 
 
 @EditClassValidation @ClassTC_022
 Scenario Outline: Check if the fields are updated with valid data
@@ -42,16 +42,16 @@ Examples:
 #  |  KeyOption          |   SheetName    |
 #  | InValidData         |   Class        |
 
-@EditClassValidation @ClassTC_024
-#Bug - Without updating, Successful Updated message getting 
-Scenario Outline: Check if the mandatory fields are updated with valid data
-Given Admin is on the Edit Class Popup window
-When Update the mandatory fields with valid "<KeyOption>" data from excel "<SheetName>"and click save
-Then Admin gets message "SuccessfulClass Updated" and see the updated values in data table
+# @EditClassValidation @ClassTC_024
+# #Bug - Without updating, Successful Updated message getting 
+# Scenario Outline: Check if the mandatory fields are updated with valid data
+# Given Admin is on the Edit Class Popup window
+# When Update the mandatory fields with valid "<KeyOption>" data from excel "<SheetName>"and click save
+# Then Admin gets message "SuccessfulClass Updated" and see the updated values in data table
 
-Examples:
- |  KeyOption                 |   SheetName    |
- |  MandatoryValid            |   Class        |
+# Examples:
+#  |  KeyOption                 |   SheetName    |
+#  |  MandatoryValid            |   Class        |
 
 @EditClassValidation @ClassTC_025
 Scenario Outline: Check if the optional fields are updated with valid data
