@@ -16,7 +16,8 @@ class ProgramPage {
         this.addNewProgramPane = page.locator('button:has-text("Add New Program")');
         this.logout_btn = page.locator('#logout');
         this.addNewProgram_btn = page.getByText('Add New Program');  
-        this.overlay = page.locator('.cdk-overlay-pane');
+        //this.overlay = page.locator('.cdk-overlay-pane');
+        this.overlay = page.locator('.cdk-overlay-transparent-backdrop');
         this.manageProgramHeader = page.getByText(' Manage Program');
         this.search_txtBox = page.locator('#filterGlobal');
         this.programDetailsPopUp = page.locator('//div[contains(@class,"p-dialog-mask-scrollblocker")]');
@@ -36,6 +37,16 @@ class ProgramPage {
         this.checkedInactiveStatus = page.locator('input#Inactive');
         this.programSuccessMsg = page.locator('div.p-toast-summary');
         this.searchBox = page.getByPlaceholder('Search...');
+        this.firstCheckBoxInProgramDataTable = page.locator('//tr[1]/td[1]');
+        this.commonDeleteIcon = page.locator('//div[@class="box"]//span[@class="p-button-icon pi pi-trash"]');
+        this.commonCheckBox = page.locator('//div[@role="checkbox"]');
+        this.checkBox = page.locator('//div[@role="checkbox"]');
+        this.popUp_confirmDeletion = page.locator('//p-confirmdialog//span[text()="Confirm"]');
+        this.popUp_confirmDeletion_Yes = page.locator('//p-confirmdialog//button/span[text()="Yes"]');
+        this.popUp_confirmDeletion_No = page.locator('//p-confirmdialog//button/span[text()="No"]');
+        this.popUp_confirmDeletion_closeX = page.locator('//button[contains(@class,"p-dialog-header-close")]');
+        this.popUpSuccessMsg = page.locator('//app-program//div[text()="Successful"]');
+        this.paginatorText = page.locator('//span[contains(text(),"Showing")]');
         // Define the mandatory fields and their associated label and asterisk selectors
         this.programPageMandatoryFields = [
         { label: 'Name', labelSelector: 'label[for="programName"]', asteriskSelector: '(//../span[text()="*"])[1]' },
@@ -167,7 +178,6 @@ class ProgramPage {
   //using json 
   async enterProgramDesc(page, label){
     const value = ProgramPage.getFieldValue(label); // Call static method
-    //await page.fill(this.programDesc_txtBox, value);
     await this.programDesc_txtBox.fill(value);
   }
 
@@ -211,7 +221,6 @@ class ProgramPage {
 
   async enterValidProgramName(){
     const validProgramName = builder.getProgramName();
-    //this.currentPrgmName = validProgramName;
     console.log("validProgramName : "+validProgramName);
     await this.programname_txtBox.fill(validProgramName); 
   }
@@ -256,6 +265,75 @@ async searchRecord(key,value) {
     }
 }
 
+async deleteFirstProgram(page){
+await this.clickOnCheckBox(page,1, 1);
+await this.commonDeleteIcon.click();
+}
+
+async deleteByPartialSearch(searchValue){
+    const stringValue = String(searchValue);
+    await this.searchBox.fill(stringValue); // 1. Enter search value
+    if(await this.page.locator(`//tr[1]/td[contains(text(),"${searchValue}")]`).isVisible()){
+        this.deleteFirstProgram();
+    }
+}
+async deleteMultipleRecord(page, count) {
+    const totalRecordToDelete = count;
+    const listOfProgramName = [];
   
+    // Click on checkboxes for the specified range
+    const programName = await this.clickOnCheckBox(page, 1, totalRecordToDelete);
+    listOfProgramName.push(programName);
+  
+    // Click on the common delete icon
+    await clickOnCommonDeleteIcon(page);
+    return listOfProgramName;
+  }
+
+  async  clickOnCheckBox(page,fromRowNum, toRowNum) {
+    const checkboxes = await this.checkBox; // Replace with your actual checkbox selector
+  
+    for (let i = fromRowNum; i <= toRowNum; i++) {
+      const checkbox = checkboxes.nth(i - 1); // Playwright uses 0-based indexing
+      if (await checkbox.isEnabled()) {
+        await checkbox.click();
+      }
+    }
+    // Get the program name from the specified row
+    const programName = await this.page.locator(`//tr[${fromRowNum}]/td[2]`).textContent();
+  
+    return programName.trim();
+  }
+  async clickOnConfirmDeletionPopUp(page, action) {
+    switch (action) {
+      case 'Yes':
+        // Logic to confirm deletion
+        await this.popUp_confirmDeletion_Yes.click(); // Replace with the actual selector for the confirm button
+        console.log('Deletion confirmed.');
+        break;
+  
+      case 'No':
+        // Logic to cancel deletion
+        await this.popUp_confirmDeletion_No.click(); // Replace with the actual selector for the cancel button
+        console.log('Deletion canceled.');
+        break;
+  
+     case 'Close':
+        await this.popUp_confirmDeletion_closeX.click(); // Replace with the actual selector for the cancel button
+        console.log('Deletion canceled.');
+        break;
+  
+      default:
+        console.log('Invalid action specified. Please "confirm" or "cancel".');
+        break;
+    }
+  }
+
+  async searchAssertion(){
+    expect (await this.paginatorText).toContainText('Showing 0 to 0 of 0 entries');
+   }
+   async deleteConfirmation(){
+    expect (await this.popUp_confirmDeletion).toBeVisible();
+   }
 }
 module.exports = {ProgramPage};
