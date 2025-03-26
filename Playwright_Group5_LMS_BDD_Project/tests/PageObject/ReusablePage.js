@@ -28,6 +28,36 @@ async navigate() {
     await  this.password.fill(process.env.PASSWORD);  // Use the password stored in .env
     await this.login_btn.click();
   }
+
+  async click(locator){
+    await locator.click();
+  }
+  async getHeaderText(locator){
+    const headerText =  await locator.innerText();
+    return headerText.trim();
+    }
+  
+  async isVisible(locator){
+    return locator.isVisible();
+  }
+
+  async getAttribute(locator,attribute){
+    const attributeValue = await locator.getAttribute(attribute);
+    // Log the value
+    console.log('Attribute value:', attributeValue);
+  }
+/**
+ * Asserts that a locator contains the expected text.
+ * @param {Locator} locator - The Playwright locator to check.
+ * @param {string} expectedText - The expected text to validate.
+ */
+
+  async assertLocatorContainsText(locator, expectedText) {
+    const actualText = await locator.textContent();
+    console.log(`Actual text: "${actualText}"`);
+    console.log(`Expected text: "${expectedText}"`);
+    await expect(locator).toContainText(expectedText);
+  }
 //    getEditProgramName(){
 //     return String(process.env.EDIT_PROGRAM);
 //   }
