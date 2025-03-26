@@ -32,7 +32,7 @@ let expectedStaffName = "";
   
   Then('Admin should land on the {string} page', async function({}, expectedPage) {
     const actualPage = await classPage.validatePageClass();
-        expect(await actualPage).toBe(expectedPage);
+    expect(await actualPage).toBe(expectedPage);
   });
 
 //****************Scenario 2
@@ -275,8 +275,8 @@ Then('Admin should see weekends dates are disabled to select', async function({}
   });
 
   Then('Class Details popup window should be closed without saving', async function({})  {
-    const result = await classPage.disappearsClassDetailsForm();
-    expect(result).toBeTruthy();
+    const isPopupDisappear = await classPage.disappearsClassDetailsForm();
+    expect(isPopupDisappear).toBeTruthy();
   });
 
 
