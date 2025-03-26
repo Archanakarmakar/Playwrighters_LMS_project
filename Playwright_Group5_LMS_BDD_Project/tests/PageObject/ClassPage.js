@@ -26,6 +26,7 @@ class ClassPage{
         this.overlayer = page.locator('.cdk-overlay-backdrop');
         this.batchNameInputField = page.locator("//label[text()='Batch Name']");
         this.batchNameDropDown = page.locator("//p-dropdown[@id='batchName']//div[@role='button']");
+        this.batchNameDropDownEdit =page.locator("//input[@placeholder='Select a Batch Name']");
         this.listOfBatchesFromDropdown = page.locator("//p-dropdownitem");
         this.classTopicInputField = page.locator("//label[text()='Class Topic ']");
         this.classTopic = page.locator("//input[@id='classTopic']");
@@ -58,6 +59,12 @@ class ClassPage{
         this.searchStaffName =page.locator("//tbody/tr[1]/td[7]");
         this.batchNameList = page.locator("//tbody/tr/td[2]");
         this.classTopicList = page.locator("//tbody/tr/td[3]");
+
+        this.editIcon = page.locator("//tbody//tr[1]//button[@ng-reflect-icon='pi pi-pencil']");
+        this.staffNameClearIcon = page.locator("//p-dropdown[@placeholder='Select a Staff Name']//i");
+        this.editStaffNameDropDown = page.locator("//input[@placeholder='Select a Staff Name']");
+
+        this.searchClassDesc =page.locator("//tbody/tr[1]/td[4]");
 
     }
 
@@ -497,6 +504,73 @@ async getStaffNamesFromTable() {
     }
 
     return staffNames;
+}
+
+async clickEditIcon(){
+    await this.overlayer.click();
+    await this.editIcon.click();
+ }
+ async isEditPopUpDisplayed() {
+    const editPopUp = await this.classDetails;
+    return await editPopUp.isVisible();
+}
+
+async isBatchNameDrpdwnDisabled(){
+    //await this.batchNameDropDownEdit.waitFor({ state: "visible" });
+    return !(await this.batchNameDropDownEdit.isEnabled());
+}
+async isClassTopicDisabled(){
+    return !(await this.classTopic.isEnabled());
+}
+
+async validEditClass(Keyoption,Sheetname){
+    const testData = getDataByKeyOption(filepath,Sheetname,Keyoption)
+    const staffname = testData['staffName'];
+    await this.staffNameClearIcon.click();
+    await this.staffName.click();
+    await this.editStaffNameDropDown.fill(staffname);   
+    await this.saveBtn.click();
+    return staffname;
+}
+
+async optionalTextFieldsEdit(KeyOption,SheetName){
+    const testData = getDataByKeyOption(filepath,SheetName,KeyOption)
+    let value_comments = (testData['Comments']).toString();
+    let value_ClassDesc = (testData['classDesc']).toString();;
+    let Notes_Value = (testData['Notes']).toString();;
+    let Recording_Value = (testData['Recordings']).toString();;
+    console.log(value_comments,value_ClassDesc,Notes_Value,Recording_Value)
+    await (this.commentsField).fill(value_comments);
+    await (this.classDescriptionField).fill(value_ClassDesc);
+    await (this.classNotesField).fill(Notes_Value);
+    await (this.classRecordingField).fill(Recording_Value);
+    await (this.saveBtn).click();
+    return value_ClassDesc;
+ }
+
+ async optionalTextFieldsValidDataEdit(KeyOption,SheetName){
+    const testData = getDataByKeyOption(filepath,SheetName,KeyOption)
+    let value_comments = (testData['Comments']);
+    let value_ClassDesc = (testData['classDesc']);
+    let Notes_Value = (testData['Notes']);
+    let Recording_Value = (testData['Recordings']);
+    console.log(value_comments,value_ClassDesc,Notes_Value,Recording_Value)
+    await (this.commentsField).fill(value_comments);
+    await (this.classDescriptionField).fill(value_ClassDesc);
+    await (this.classNotesField).fill(Notes_Value);
+    await (this.classRecordingField).fill(Recording_Value);
+    await (this.saveBtn).click();
+    return value_ClassDesc;
+ }
+ async editAssertion(KeyOption,SheetName){
+    const testData = getDataByKeyOption(filepath,SheetName,KeyOption)
+    let value_comments = (testData['Comments']);
+    let value_ClassDesc = (testData['classDesc']);
+    let Notes_Value = (testData['Notes']);
+    let Recording_Value = (testData['Recordings']);
+    await this.searchBar.fill(value_ClassDesc);
+    expect (await this.searchClassDesc.textContent()).toEqual(value_ClassDesc);
+    
 }
         
 
