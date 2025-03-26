@@ -2,7 +2,7 @@ Feature: Manage Program - Delete Program
 
 Background: Admin is on program module after reaching home page
 Given Admin is logged in to LMS Portal
-When Admin clicks on program in home page and admin lands on Manage program Page
+# When Admin clicks on program in home page and admin lands on Manage program Page
 
 Scenario: Verify delete feature
 Given Admin is on Program module
