@@ -25,8 +25,10 @@ let expectedStaffName = "";
   });
   
   When('Admin clicks the Class Navigation bar in the Header', async function ({}) {
+    const reusablepage = await this.pageManager.getReusablePage();
     classPage = await this.pageManager.getClassPage();
-    await classPage.clickClass();
+    const selector = await classPage.clickClass();
+    await reusablepage.click(selector);
     
   });
   
